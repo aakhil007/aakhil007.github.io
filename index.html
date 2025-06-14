@@ -1,9 +1,240 @@
 <!DOCTYPE html>
-<html>
-<title> Aakhil</title>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aakhil</title>
+    <style>
+        :root {
+            --bg: #181c20;
+            --panel: #23272e;
+            --text: #c3e88d;
+            --comment: #5c6370;
+            --accent: #82aaff;
+            --folder: #ffd700;
+            --shadow: 0 2px 12px rgba(0,0,0,0.12);
+        }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
+            min-height: 100vh;
+        }
+        .terminal {
+            background: var(--panel);
+            margin: 2rem auto;
+            max-width: 700px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            padding: 2rem 1.5rem 1.5rem 1.5rem;
+            position: relative;
+        }
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5em;
+            margin-bottom: 1.5em;
+        }
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .dot.red { background: #ff5f56; }
+        .dot.yellow { background: #ffbd2e; }
+        .dot.green { background: #27c93f; }
+        .prompt {
+            color: var(--accent);
+        }
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            background: var(--accent);
+            animation: blink 1s steps(1) infinite;
+            height: 1.1em;
+            vertical-align: middle;
+            margin-left: 2px;
+        }
+        .ascii-title-box {
+            background: #181c20;
+            border: 2px solid #444;
+            border-radius: 8px;
+            padding: 1em 0.5em;
+            margin-bottom: 1.5em;
+            text-align: center;
+            font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
+            font-size: 1.1em;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            display: inline-block;
+            width: 100%;
+            color: var(--text);
+        }
+        .comment {
+            color: var(--comment);
+            font-style: italic;
+            margin-bottom: 1.5em;
+            display: block;
+        }
+        .folder-link {
+            color: var(--folder);
+            cursor: pointer;
+            text-decoration: underline;
+            font-weight: bold;
+            margin: 0 0.5em;
+            transition: color 0.2s;
+        }
+        .folder-link:hover {
+            color: #fffbe7;
+        }
+        .cd-link {
+            color: var(--accent);
+            cursor: pointer;
+            text-decoration: underline;
+            margin-top: 2em;
+            display: inline-block;
+            transition: color 0.2s;
+        }
+        .cd-link:hover {
+            color: #c3e88d;
+        }
+        .output-section {
+            margin-top: 1.5em;
+            animation: fadeIn 0.5s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px);}
+            to { opacity: 1; transform: none;}
+        }
+        @media (max-width: 600px) {
+            .terminal {
+                padding: 1rem 0.5rem 1rem 0.5rem;
+            }
+            .ascii-title-box {
+                font-size: 0.85em;
+                padding: 0.5em 0.2em;
+            }
+        }
+    </style>
+</head>
 <body>
+    <div class="terminal" id="terminal">
+        <div class="terminal-header">
+            <span class="dot red"></span>
+            <span class="dot yellow"></span>
+            <span class="dot green"></span>
+        </div>
+        <div class="ascii-title-box">
+<pre>
+┌───────────────────────────────┐
+│    Hi, I'm Aakhil            │
+└───────────────────────────────┘
+</pre>
+        </div>
+        <div id="welcome-block">
+            <span class="prompt">aakhil@universe:~$</span> ./welcome_msg.sh
+            <div style="margin-top:0.5em;">Hello Human, Welcome to my space</div>
+        </div>
+        <div style="margin-top:2em;" id="main-menu">
+            <span class="prompt">aakhil@universe:~$</span> 
+            <span>
+                <span class="folder-link" onclick="runTerminalAnimation('photography')">photography</span>  |  
+                <span class="folder-link" onclick="runTerminalAnimation('blogs')">blogs</span>
+            </span>
+        </div>
+        <div id="output"></div>
+    </div>
+    <script>
+        const output = document.getElementById('output');
+        const mainMenu = document.getElementById('main-menu');
+        const sections = {
+            photography: {
+                prompt: 'aakhil@universe:~/photography$',
+                content: `
+                    <div class="output-section">
+                        <h2>Photography</h2>
+                        <div><span class="comment"># Snapshots, stories, and pixels</span></div>
+                        <div>
+                            <p>Welcome to my photography section!<br>
+                            <span style="color:var(--accent)">[Coming soon]</span> My favorite shots and the stories behind them.</p>
+                        </div>
+                        <div>
+                            <span class="cd-link" onclick="runCdBack()">cd ..</span>
+                        </div>
+                    </div>
+                `
+            },
+            blogs: {
+                prompt: 'aakhil@universe:~/blogs$',
+                content: `
+                    <div class="output-section">
+                        <h2>Blogs</h2>
+                        <div><span class="comment"># Thoughts, tutorials, and tech</span></div>
+                        <div>
+                            <p>Read my latest posts, guides, and experiences in tech and beyond.<br>
+                            <span style="color:var(--accent)">[Coming soon]</span></p>
+                        </div>
+                        <div>
+                            <span class="cd-link" onclick="runCdBack()">cd ..</span>
+                        </div>
+                    </div>
+                `
+            }
+        };
 
-<h> Hello Universe </h>
+        function typeText(element, text, callback, speed = 40) {
+            let i = 0;
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                } else if (callback) {
+                    callback();
+                }
+            }
+            type();
+        }
 
+        function runTerminalAnimation(section) {
+            mainMenu.style.display = 'none';
+            output.innerHTML = '';
+            // Step 1: Type cd command
+            const cmdDiv = document.createElement('div');
+            cmdDiv.innerHTML = `<span class="prompt">aakhil@universe:~$</span> `;
+            output.appendChild(cmdDiv);
+            typeText(cmdDiv, `cd ${section}`, () => {
+                // Step 2: New prompt, type ls
+                setTimeout(() => {
+                    const lsDiv = document.createElement('div');
+                    lsDiv.innerHTML = `<span class="prompt">${sections[section].prompt}</span> `;
+                    output.appendChild(lsDiv);
+                    typeText(lsDiv, 'ls', () => {
+                        // Step 3: Show section content
+                        setTimeout(() => {
+                            output.innerHTML += sections[section].content;
+                        }, 350);
+                    });
+                }, 350);
+            });
+        }
+
+        function runCdBack() {
+            output.innerHTML = '';
+            // Animate cd .. command
+            const cmdDiv = document.createElement('div');
+            cmdDiv.innerHTML = `<span class="prompt">aakhil@universe:~$</span> `;
+            output.appendChild(cmdDiv);
+            typeText(cmdDiv, 'cd ..', () => {
+                setTimeout(() => {
+                    output.innerHTML = '';
+                    mainMenu.style.display = '';
+                }, 350);
+            });
+        }
+    </script>
 </body>
 </html>
