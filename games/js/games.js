@@ -134,8 +134,8 @@ const Sudoku = {
     renderResumePrompt(saved) {
         this.stopTimer();
         this.root.innerHTML = '';
-        const h = document.createElement('h2');
-        h.textContent = 'Sudoku';
+        const h = document.createElement('div');
+        h.innerHTML = `<span class="prompt">aakhil@universe:~/games$</span> ./sudoku`;
         const note = document.createElement('div');
         note.className = 'comment';
         note.textContent = `# you have a ${saved.difficulty} game in progress (${formatTime(saved.elapsed)})`;
@@ -156,8 +156,8 @@ const Sudoku = {
     renderSetup() {
         this.stopTimer();
         this.root.innerHTML = '';
-        const h = document.createElement('h2');
-        h.textContent = 'Sudoku';
+        const h = document.createElement('div');
+        h.innerHTML = `<span class="prompt">aakhil@universe:~/games$</span> ./sudoku`;
         const note = document.createElement('div');
         note.className = 'comment';
         note.textContent = '# pick a difficulty';
@@ -222,8 +222,8 @@ const Sudoku = {
         this.root.innerHTML = '';
         const s = this.state;
 
-        const h = document.createElement('h2');
-        h.textContent = 'Sudoku';
+        const h = document.createElement('div');
+        h.innerHTML = `<span class="prompt">aakhil@universe:~/games$</span> ./sudoku`;
 
         const bar = document.createElement('div');
         bar.className = 'sudoku-bar';
