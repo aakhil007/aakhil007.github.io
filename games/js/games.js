@@ -298,7 +298,36 @@ const Sudoku = {
         this.state.current[r][c] = v === '' ? 0 : parseInt(v, 10);
         this.save();
         this.highlightConflicts(false);
+        if (v !== '') this.checkLineComplete(r, c);
         this.checkWin();
+    },
+
+    // Splash green across a row/column the moment it's completed correctly.
+    checkLineComplete(r, c) {
+        const s = this.state;
+        let rowDone = true;
+        for (let i = 0; i < 9; i++) {
+            if (s.current[r][i] !== s.solution[r][i]) { rowDone = false; break; }
+        }
+        if (rowDone) this.flashLine(Array.from({ length: 9 }, (_, i) => this.cells[r * 9 + i]));
+
+        let colDone = true;
+        for (let i = 0; i < 9; i++) {
+            if (s.current[i][c] !== s.solution[i][c]) { colDone = false; break; }
+        }
+        if (colDone) this.flashLine(Array.from({ length: 9 }, (_, i) => this.cells[i * 9 + c]));
+    },
+
+    flashLine(cells) {
+        cells.forEach((cell) => {
+            cell.classList.remove('flash-complete');
+            void cell.offsetWidth; // force reflow so the animation can replay
+            cell.classList.add('flash-complete');
+            cell.addEventListener('animationend', function handler() {
+                cell.classList.remove('flash-complete');
+                cell.removeEventListener('animationend', handler);
+            });
+        });
     },
 
     onKey(e, r, c) {
