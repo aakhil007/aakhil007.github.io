@@ -103,6 +103,41 @@
 .num-pad .btn { padding: 0.5em 0; }
 .win-banner { color: var(--folder); font-weight: bold; margin: 0.6em 0; }
 .stats-line { color: var(--comment); margin: 0.4em 0; }
+
+/* ---- Tic Tac Toe ---- */
+.ttt-board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 270px;
+    margin: 0.8em 0;
+    background: #fff;
+    border: 2px solid #1a1a1a;
+}
+.ttt-cell {
+    aspect-ratio: 1 / 1;
+    box-sizing: border-box;
+    min-width: 0;
+    padding: 0;
+    border: none;
+    border-right: 1px solid #c8c8c8;
+    border-bottom: 1px solid #c8c8c8;
+    background: #fff;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 2.4em;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+.ttt-cell:nth-child(3n) { border-right: none; }
+.ttt-cell:nth-child(n+7) { border-bottom: none; }
+.ttt-cell.x { color: #1d4ed8; }
+.ttt-cell.o { color: #c0392b; }
+.ttt-cell:not(.x):not(.o):hover { background: #fff6c2; }
+.ttt-cell.ttt-win { background: #b9f6c1; }
+
 /* ---- Win celebration ---- */
 .confetti-layer { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 9999; }
 .confetti {
