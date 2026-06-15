@@ -91,7 +91,7 @@
     60%  { background: #b9f6c1; }
     100% { background: #fff; box-shadow: none; }
 }
-.sudoku-cell.flash-complete { animation: cellComplete 0.7s ease-out; }
+.sudoku-cell.flash-complete { animation: cellComplete 0.98s ease-out; }
 /* trim inner edges so they don't double up with the outer frame */
 .sudoku-cell:nth-child(9n) { border-right: none; }
 .sudoku-cell:nth-child(n+73) { border-bottom: none; }
@@ -102,6 +102,46 @@
 .num-pad .btn { padding: 0.5em 0; }
 .win-banner { color: var(--folder); font-weight: bold; margin: 0.6em 0; }
 .stats-line { color: var(--comment); margin: 0.4em 0; }
+/* ---- Win celebration ---- */
+.confetti-layer { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 9999; }
+.confetti {
+    position: absolute;
+    top: -12px;
+    width: 8px;
+    height: 14px;
+    opacity: 0.9;
+    will-change: transform;
+    animation-name: confettiFall;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+}
+@keyframes confettiFall {
+    0%   { transform: translateY(-12vh) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(720deg); opacity: 0.9; }
+}
+.win-modal {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.55);
+    z-index: 10000;
+    animation: fadeIn 0.3s;
+}
+.win-modal .card {
+    background: var(--panel);
+    border: 1px solid #3a414d;
+    border-radius: 12px;
+    padding: 1.6em 1.8em;
+    text-align: center;
+    box-shadow: var(--shadow);
+    max-width: 320px;
+    margin: 1em;
+}
+.win-modal h3 { color: var(--folder); margin: 0 0 0.4em; font-size: 1.4em; }
+.win-modal .sub { color: var(--text); margin-bottom: 1.2em; }
+.win-modal .difficulty-row { justify-content: center; margin: 0; }
 @media (max-width: 600px) {
     .sudoku-board { max-width: 338px; }
     .num-pad { max-width: 383px; }

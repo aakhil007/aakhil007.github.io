@@ -316,6 +316,21 @@ const Sudoku = {
             if (s.current[i][c] !== s.solution[i][c]) { colDone = false; break; }
         }
         if (colDone) this.flashLine(Array.from({ length: 9 }, (_, i) => this.cells[i * 9 + c]));
+
+        const br = Math.floor(r / 3) * 3, bc = Math.floor(c / 3) * 3;
+        let boxDone = true;
+        for (let i = 0; i < 3 && boxDone; i++) {
+            for (let j = 0; j < 3; j++) {
+                if (s.current[br + i][bc + j] !== s.solution[br + i][bc + j]) { boxDone = false; break; }
+            }
+        }
+        if (boxDone) {
+            const boxCells = [];
+            for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) {
+                boxCells.push(this.cells[(br + i) * 9 + (bc + j)]);
+            }
+            this.flashLine(boxCells);
+        }
     },
 
     flashLine(cells) {
@@ -392,13 +407,59 @@ const Sudoku = {
         Store.set(KEYS.stats, stats);
 
         const banner = document.getElementById('sudoku-banner');
+        const name = Store.get(KEYS.user, 'Player');
         if (banner) {
             banner.className = 'win-banner';
-            const name = Store.get(KEYS.user, 'Player');
             banner.innerHTML = `✔ Solved in ${formatTime(s.elapsed)}, ${escapeHtml(name)}! ` +
                 (isRecord ? `<span style="color:var(--accent)">New best for ${s.difficulty}!</span>` : `<span class="comment">best: ${formatTime(stats.best[s.difficulty])}</span>`);
         }
         this.cells.forEach((cell) => { cell.readOnly = true; });
+
+        this.celebrate();
+        const recordText = isRecord ? `New best for ${s.difficulty}!` : `Best ${s.difficulty}: ${formatTime(stats.best[s.difficulty])}`;
+        this.showWinModal(name, formatTime(s.elapsed), recordText);
+    },
+
+    celebrate() {
+        const colors = ['#82aaff', '#ffd700', '#c3e88d', '#ff5f56', '#27c93f', '#ffbd2e'];
+        const layer = document.createElement('div');
+        layer.className = 'confetti-layer';
+        for (let i = 0; i < 130; i++) {
+            const piece = document.createElement('span');
+            piece.className = 'confetti';
+            piece.style.left = (Math.random() * 100) + 'vw';
+            piece.style.background = colors[i % colors.length];
+            piece.style.animationDelay = (Math.random() * 0.6) + 's';
+            piece.style.animationDuration = (2 + Math.random() * 1.6) + 's';
+            layer.appendChild(piece);
+        }
+        document.body.appendChild(layer);
+        setTimeout(() => layer.remove(), 4500);
+    },
+
+    showWinModal(name, time, recordText) {
+        const overlay = document.createElement('div');
+        overlay.className = 'win-modal';
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `<h3>🎉 Solved!</h3>` +
+            `<div class="sub">Nice work, ${escapeHtml(name)} — done in ${time}.<br>` +
+            `<span class="comment">${recordText}</span></div>`;
+        const row = document.createElement('div');
+        row.className = 'difficulty-row';
+        const again = document.createElement('button');
+        again.className = 'btn primary';
+        again.textContent = 'New game';
+        again.onclick = () => { overlay.remove(); this.renderSetup(); };
+        const close = document.createElement('button');
+        close.className = 'btn';
+        close.textContent = 'Close';
+        close.onclick = () => overlay.remove();
+        row.append(again, close);
+        card.appendChild(row);
+        overlay.appendChild(card);
+        overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+        document.body.appendChild(overlay);
     },
 
     startTimer() {
