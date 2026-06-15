@@ -42,8 +42,6 @@ const Games = {
 
     renderNamePrompt() {
         this.root.innerHTML = '';
-        const h = document.createElement('h2');
-        h.textContent = 'games';
         const c = document.createElement('div');
         c.className = 'comment';
         c.textContent = "# first time here — what should I call you?";
@@ -65,14 +63,12 @@ const Games = {
             Store.set(KEYS.user, val);
             this.renderArcade(val);
         });
-        this.root.append(h, c, form);
+        this.root.append(c, form);
         input.focus();
     },
 
     renderArcade(name) {
         this.root.innerHTML = '';
-        const h = document.createElement('h2');
-        h.textContent = 'games';
         const greet = document.createElement('div');
         greet.innerHTML = `<span class="comment" style="display:inline"># welcome back, </span><span style="color:var(--folder)">${escapeHtml(name)}</span> ` +
             `<span class="comment" style="display:inline">(</span><span class="cd-link" style="margin:0;font-size:0.85em;">not you?</span><span class="comment" style="display:inline">)</span>`;
@@ -112,7 +108,7 @@ const Games = {
         cd.onclick = () => goHome();
         back.appendChild(cd);
 
-        this.root.append(h, greet, grid, statsLine, back);
+        this.root.append(greet, grid, statsLine, back);
     },
 
     launchSudoku() {
