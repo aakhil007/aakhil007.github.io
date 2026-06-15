@@ -198,7 +198,8 @@ const Sudoku = {
             current: puzzle.map((r) => r.slice()),
             elapsed: 0,
             startTs: Date.now(),
-            solved: false
+            solved: false,
+            hintsUsed: 0
         };
         this.save();
         this.renderGame();
@@ -213,7 +214,8 @@ const Sudoku = {
             current: saved.current,
             elapsed: saved.elapsed,
             startTs: Date.now(),
-            solved: false
+            solved: false,
+            hintsUsed: saved.hintsUsed || 0
         };
         this.renderGame();
         this.startTimer();
@@ -239,7 +241,11 @@ const Sudoku = {
         checkBtn.className = 'btn';
         checkBtn.textContent = 'Check';
         checkBtn.onclick = () => this.highlightConflicts(true);
-        bar.append(newBtn, checkBtn);
+        const hintBtn = document.createElement('button');
+        hintBtn.className = 'btn';
+        hintBtn.textContent = 'Hint';
+        hintBtn.onclick = () => this.giveHint();
+        bar.append(newBtn, checkBtn, hintBtn);
 
         const board = document.createElement('div');
         board.className = 'sudoku-board';
@@ -345,6 +351,45 @@ const Sudoku = {
         });
     },
 
+    // Reveal one correct cell. Prefers the focused cell if it's blank/wrong,
+    // otherwise picks a random unsolved cell.
+    giveHint() {
+        const s = this.state;
+        if (!s || s.solved) return;
+
+        let target = null;
+        const active = document.activeElement;
+        if (active && active.classList && active.classList.contains('sudoku-cell') && !active.readOnly) {
+            const ar = +active.dataset.r, ac = +active.dataset.c;
+            if (s.current[ar][ac] !== s.solution[ar][ac]) target = [ar, ac];
+        }
+        if (!target) {
+            const candidates = [];
+            for (let r = 0; r < 9; r++) for (let c = 0; c < 9; c++) {
+                if (s.puzzle[r][c] === 0 && s.current[r][c] !== s.solution[r][c]) candidates.push([r, c]);
+            }
+            if (!candidates.length) return;
+            target = candidates[Math.floor(Math.random() * candidates.length)];
+        }
+
+        const [r, c] = target;
+        const val = s.solution[r][c];
+        s.current[r][c] = val;
+        s.hintsUsed = (s.hintsUsed || 0) + 1;
+
+        const cell = this.cells[r * 9 + c];
+        cell.value = val;
+        cell.readOnly = true;
+        cell.classList.remove('conflict');
+        cell.classList.add('hint');
+
+        this.save();
+        this.highlightConflicts(false);
+        this.flashLine([cell]);
+        this.checkLineComplete(r, c);
+        this.checkWin();
+    },
+
     onKey(e, r, c) {
         const moves = { ArrowUp: [-1, 0], ArrowDown: [1, 0], ArrowLeft: [0, -1], ArrowRight: [0, 1] };
         if (moves[e.key]) {
@@ -402,21 +447,32 @@ const Sudoku = {
         stats.won = (stats.won || 0) + 1;
         stats.best = stats.best || {};
         const prevBest = stats.best[s.difficulty];
+        const usedHints = (s.hintsUsed || 0) > 0;
         let isRecord = false;
-        if (prevBest == null || s.elapsed < prevBest) { stats.best[s.difficulty] = s.elapsed; isRecord = true; }
+        if (!usedHints && (prevBest == null || s.elapsed < prevBest)) { stats.best[s.difficulty] = s.elapsed; isRecord = true; }
         Store.set(KEYS.stats, stats);
+
+        const hintNote = usedHints
+            ? `${s.hintsUsed} hint${s.hintsUsed > 1 ? 's' : ''} used — time not recorded`
+            : '';
 
         const banner = document.getElementById('sudoku-banner');
         const name = Store.get(KEYS.user, 'Player');
         if (banner) {
             banner.className = 'win-banner';
-            banner.innerHTML = `✔ Solved in ${formatTime(s.elapsed)}, ${escapeHtml(name)}! ` +
-                (isRecord ? `<span style="color:var(--accent)">New best for ${s.difficulty}!</span>` : `<span class="comment">best: ${formatTime(stats.best[s.difficulty])}</span>`);
+            let tail;
+            if (usedHints) tail = `<span class="comment">${hintNote}</span>`;
+            else if (isRecord) tail = `<span style="color:var(--accent)">New best for ${s.difficulty}!</span>`;
+            else tail = `<span class="comment">best: ${formatTime(stats.best[s.difficulty])}</span>`;
+            banner.innerHTML = `✔ Solved in ${formatTime(s.elapsed)}, ${escapeHtml(name)}! ` + tail;
         }
         this.cells.forEach((cell) => { cell.readOnly = true; });
 
         this.celebrate();
-        const recordText = isRecord ? `New best for ${s.difficulty}!` : `Best ${s.difficulty}: ${formatTime(stats.best[s.difficulty])}`;
+        let recordText;
+        if (usedHints) recordText = hintNote;
+        else if (isRecord) recordText = `New best for ${s.difficulty}!`;
+        else recordText = `Best ${s.difficulty}: ${formatTime(stats.best[s.difficulty])}`;
         this.showWinModal(name, formatTime(s.elapsed), recordText);
     },
 
@@ -485,7 +541,8 @@ const Sudoku = {
             solution: this.state.solution,
             puzzle: this.state.puzzle,
             current: this.state.current,
-            elapsed: this.state.elapsed
+            elapsed: this.state.elapsed,
+            hintsUsed: this.state.hintsUsed || 0
         });
     }
 };

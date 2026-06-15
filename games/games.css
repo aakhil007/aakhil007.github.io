@@ -85,6 +85,7 @@
 .sudoku-cell:focus { outline: none; background: #fff6c2; }
 .sudoku-cell.given { color: #111; font-weight: 700; }
 .sudoku-cell.conflict { color: #c0392b; background: #ffdede; }
+.sudoku-cell.hint { color: #0a7d2c; font-weight: 700; background: #eafbe7; }
 /* green splash when a row/column is completed correctly */
 @keyframes cellComplete {
     0%   { background: #28c93f; box-shadow: inset 0 0 0 2px #1f9e31; }
