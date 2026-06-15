@@ -74,8 +74,8 @@ const Games = {
         const h = document.createElement('h2');
         h.textContent = 'games';
         const greet = document.createElement('div');
-        greet.innerHTML = `<span class="comment"># welcome back, </span><span style="color:var(--folder)">${escapeHtml(name)}</span> ` +
-            `<span class="comment">(</span><span class="cd-link" style="margin:0;font-size:0.85em;">not you?</span><span class="comment">)</span>`;
+        greet.innerHTML = `<span class="comment" style="display:inline"># welcome back, </span><span style="color:var(--folder)">${escapeHtml(name)}</span> ` +
+            `<span class="comment" style="display:inline">(</span><span class="cd-link" style="margin:0;font-size:0.85em;">not you?</span><span class="comment" style="display:inline">)</span>`;
         greet.querySelector('.cd-link').onclick = () => {
             Store.remove(KEYS.user);
             this.renderNamePrompt();
