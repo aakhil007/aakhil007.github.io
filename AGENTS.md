@@ -21,7 +21,7 @@ A personal site published via GitHub Pages at **aakhil.in** (`CNAME`). Static HT
 - Copy speaks shell: `#`-prefixed comments, `./game` to launch, `cd ~` / `cd ..` to navigate.
 
 ### Games architecture (`games/js/` — native ES modules, no build step)
-`main.js` boots the arcade, `arcade.js` is the hub (`Games`), `store.js` owns `Store`/`KEYS`, `helpers.js` holds shared utilities, and each game is its own file. Follow the existing games — `Sudoku`, `TicTacToe`, `Snake`, `G2048`. When adding a game:
+`main.js` boots the arcade, `arcade.js` is the hub (`Games`), `store.js` owns `Store`/`KEYS`, `helpers.js` holds shared utilities, and each game is its own file. Follow the existing games — `Sudoku`, `TicTacToe`, `Snake`, `G2048`, `Tetris`. When adding a game:
 1. Create `js/<game>.js` exporting a plain-object module (`export const <Name> = { ... }`) and import it in `arcade.js`.
 2. Add a `KEYS` entry (`aakhil.<game>.stats`) and persist via the `Store` helper — never call `localStorage` directly.
 3. Add a tile in `Games.renderArcade()` and a `launch<Name>()` method.

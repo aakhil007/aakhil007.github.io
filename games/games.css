@@ -289,3 +289,54 @@
     .sudoku-board { max-width: 338px; }
     .num-pad { max-width: 383px; }
 }
+
+/* ---- Tetris ---- */
+.tetris-wrap {
+    display: flex;
+    gap: 0.7em;
+    align-items: flex-start;
+    justify-content: center;
+    margin: 0.8em 0;
+}
+.tetris-board {
+    display: block;
+    flex: 1 1 auto;
+    max-width: 232px;
+    aspect-ratio: 1 / 2;
+    border: 2px solid #3a414d;
+    border-radius: 8px;
+    background: #181c20;
+    touch-action: none;      /* let drags steer, not scroll */
+}
+.tetris-side {
+    flex: 0 0 88px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35em;
+    padding-top: 0.35em;     /* optically align with the board border */
+}
+.tetris-next {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border: 2px solid #3a414d;
+    border-radius: 6px;
+    background: #181c20;
+}
+.tetris-info { color: var(--comment); line-height: 1.8; font-size: 0.85em; }
+.tetris-info .tetris-num { color: var(--folder); font-weight: bold; }
+/* mirrors .sudoku-bar .snake-score */
+.sudoku-bar .tetris-score { color: var(--folder); font-style: normal; font-weight: bold; }
+.tetris-pad {
+    display: grid;
+    grid-template-columns: repeat(5, 3.2em);
+    grid-auto-rows: 3.2em;
+    gap: 0.35em;
+    justify-content: center;
+    margin: 0.6em 0;
+}
+.tetris-pad .btn { padding: 0; font-size: 1.1em; }
+/* the pad is for touch screens only */
+@media (pointer: fine) {
+    .tetris-pad { display: none; }
+}

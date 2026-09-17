@@ -25,6 +25,7 @@ export const KEYS = {
     ttt: 'aakhil.tictactoe.stats',
     snake: 'aakhil.snake.stats',
     g2048: 'aakhil.2048.stats',
-    g2048Save: 'aakhil.2048.save'
+    g2048Save: 'aakhil.2048.save',
+    tetris: 'aakhil.tetris.stats'
 };
 
