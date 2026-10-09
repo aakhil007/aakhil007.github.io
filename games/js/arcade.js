@@ -4,6 +4,7 @@ import { Sudoku } from './sudoku.js';
 import { TicTacToe } from './tictactoe.js';
 import { Snake } from './snake.js';
 import { G2048 } from './g2048.js';
+import { Tetris } from './tetris.js';
 
 // On the standalone page, leaving the arcade returns home.
 function goHome() {
@@ -88,11 +89,18 @@ export const Games = {
             `<span class="meta">best ${g2048Stats.best || 0} · ${g2048Stats.played || 0} games</span>`;
         g2048Tile.onclick = () => this.launch2048();
 
+        const tetrisStats = Store.get(KEYS.tetris, { best: 0, played: 0, lines: 0 });
+        const tetrisTile = document.createElement('div');
+        tetrisTile.className = 'game-tile';
+        tetrisTile.innerHTML = `<span class="icon">🧱</span><span class="name">Tetris</span>` +
+            `<span class="meta">best ${tetrisStats.best || 0} · ${tetrisStats.played || 0} games</span>`;
+        tetrisTile.onclick = () => this.launchTetris();
+
         const soon = document.createElement('div');
         soon.className = 'game-tile soon';
         soon.innerHTML = `<span class="icon">🕹️</span><span class="name">More</span><span class="meta">coming soon</span>`;
 
-        grid.append(sudokuTile, tttTile, snakeTile, g2048Tile, soon);
+        grid.append(sudokuTile, tttTile, snakeTile, g2048Tile, tetrisTile, soon);
 
         const statsLine = document.createElement('div');
         statsLine.className = 'stats-line';
@@ -126,6 +134,10 @@ export const Games = {
 
     launch2048() {
         G2048.mount(this.root, () => this.showArcade(this.root));
+    },
+
+    launchTetris() {
+        Tetris.mount(this.root, () => this.showArcade(this.root));
     }
 };
 
